@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "lib": ["ESNext"],
-    "outDir": "dist",
     "esModuleInterop": true,
+    "lib": [
+      "ESNext"
+    ],
+    "outDir": "dist",
     "sourceMap": true,
-    "strict": true,
-    "types": ["@types/node"],
+    "strict": false,
+    "skipLibCheck": true,
+    "types": [
+      "@types/node"
+    ],
     "declaration": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "backup"
+  ]
 }
