@@ -11,17 +11,17 @@ Javascript/Typescript SDK For KOOK.
 
 ## TODO
 
-[x] 完成 MessageSource 迁移  
-[x] 完成 EventEmitter 迁移  
-[x] 完成 WebSocket 迁移  
-[ ] EventEmitter on() 类型补全  
-[ ] 增加 Webhook 对 compress 的适配  
-[ ] 补全 Models  
-[ ] 完成 API 迁移  
-[ ] 增加 API  
-[ ] 增加消息队列  
-[ ] 增加自动跟随限速  
-[ ] 重复 Object.assign 性能优化
+- [x] 完成 MessageSource 迁移  
+- [x] 完成 EventEmitter 迁移  
+- [x] 完成 WebSocket 迁移  
+- [ ] EventEmitter on() 类型补全  
+- [ ] 增加 Webhook 对 compress 的适配  
+- [ ] 补全 Models  
+- [ ] 完成 API 迁移  
+- [ ] 增加 API
+- [ ] 增加消息队列  
+- [ ] 增加自动跟随限速  
+- [ ] 重复 Object.assign 性能优化
 
 ## 关于使用 VS Code 进行 Debug 时不显示日志的问题
 
