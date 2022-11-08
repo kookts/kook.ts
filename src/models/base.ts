@@ -1,15 +1,15 @@
 import { BaseClient } from '../client/base.js';
 
-export abstract class BaseModel implements KBaseModelRaw {
+export class BaseModel implements KBaseModel {
   client!: BaseClient;
   id!: string;
   [key: string]: unknown;
-  constructor(data: KBaseModelRaw, client: BaseClient) {
+  constructor(data: KBaseModel, client: BaseClient) {
     Object.assign(this, data);
     this.client = client;
   }
 }
 
-export interface KBaseModelRaw {
+export interface KBaseModel {
   id: string;
 }

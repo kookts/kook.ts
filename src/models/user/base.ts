@@ -1,6 +1,6 @@
 import { CamelCasedPropertiesDeep } from 'type-fest';
 import { BaseClient } from '../../client/index.js';
-import { BaseModel, KBaseModelRaw } from '../base.js';
+import { BaseModel, KBaseModel } from '../base.js';
 
 export class BaseUser extends BaseModel implements KBaseUserData {
   username?: string;
@@ -14,7 +14,7 @@ export class BaseUser extends BaseModel implements KBaseUserData {
   }
 }
 
-export interface KBaseUserRaw extends KBaseModelRaw {
+export interface KBaseUserRaw extends KBaseModel {
   /**
    * 用户名
    */

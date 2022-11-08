@@ -1,25 +1,39 @@
-import { BaseClient } from "../../client/base.js";
-import RequestError from "../../models/error/RequestError.js";
-import { GuildUser } from "../../models/user/guild.js";
-import { KAPIResponse } from "../types.js";
-import { GuildListResponseInternal, KGuildListResponse, GuildUserListInternal, KGuildUserListResponse } from "./types.js";
+import { BaseClient } from '../../client/base.js';
+import RequestError from '../../models/error/RequestError.js';
+import { Guild } from '../../models/index.js';
+import { GuildUser } from '../../models/user/guild.js';
+import { ApiBase } from '../base.js';
+import { KAPIResponse } from '../types.js';
+import {
+  GuildListResponse,
+  GuildUserListInternal,
+  GuildViewResponse,
+  KGuildListResponse,
+  KGuildUserListResponse,
+  KGuildViewResponse,
+} from './types.js';
 
-
-export class GuildApi {
-  private client: BaseClient;
-
-  constructor(self: BaseClient) {
-    this.client = self;
-  }
-
+export class GuildApi extends ApiBase {
   /**
    * 获取当前用户加入的服务器列表
    */
-  async list(): Promise<GuildListResponseInternal> {
+  async list(): Promise<GuildListResponse> {
     const data = (await this.client.get('v3/guild/list', {}))
       .data as KAPIResponse<KGuildListResponse>;
     if (data.code === 0) {
-      return data.data;
+      return this.toMultipage(data, Guild);
+    } else {
+      throw new RequestError(data.code, data.message);
+    }
+  }
+
+  async view(guildId: string): Promise<GuildViewResponse> {
+    const data = (await (
+      await this.client.get('v3/guild/view', { guildId })
+    ).data) as KAPIResponse<KGuildViewResponse>;
+
+    if (data.code == 0) {
+      return new Guild(data.data, this.client) as Required<Guild>;
     } else {
       throw new RequestError(data.code, data.message);
     }

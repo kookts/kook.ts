@@ -1,16 +1,10 @@
-import { BaseClient } from "../../client/base.js";
-import { GuildChannel, KGuildChannel } from "../../models/channel/guild.js";
-import RequestError from "../../models/error/RequestError.js";
-import { KAPIResponse } from "../types.js";
-import { ChannelListResponse, KChannelListResponse } from "./types.js";
+import { GuildChannel, KGuildChannel } from '../../models/channel/guild.js';
+import RequestError from '../../models/error/RequestError.js';
+import { ApiBase } from '../base.js';
+import { KAPIResponse } from '../types.js';
+import { ChannelListResponse, KChannelListResponse } from './types.js';
 
-
-export class ChannelAPI {
-  private client: BaseClient;
-  constructor(client: BaseClient) {
-    this.client = client;
-  }
-
+export class ChannelAPI extends ApiBase {
   /**
    * 获取频道列表
    * @param guildId 服务器id
@@ -22,11 +16,7 @@ export class ChannelAPI {
       })
     ).data as KAPIResponse<KChannelListResponse>;
     if (data.code === 0) {
-      return {
-        items: data.data.items.map((d) => new GuildChannel(d, this.client)),
-        meta: data.data.meta,
-        sort: data.data.sort,
-      };
+      return this.toMultipage(data, GuildChannel);
     } else {
       throw new RequestError(data.code, data.message);
     }
