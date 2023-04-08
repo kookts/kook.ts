@@ -1,5 +1,5 @@
 import { BaseClient } from '../../client/index.js';
-import RequestError from '../../models/Error/RequestError.js';
+import RequestError from '../../models/error/RequestError.js';
 import { KAPIResponse } from '../types.js';
 import {
   KMessageCreateResponse,
@@ -7,15 +7,9 @@ import {
   MessageType,
 } from './types.js';
 import { GuildUser, KGuildUserData } from '../../models/user/guild.js';
+import { ApiBase } from '../base.js';
 
-export class MessageAPI {
-  private client: BaseClient;
-  constructor(self: BaseClient) {
-    this.client = self;
-  }
-
-  // TODO: LIST
-
+export class MessageAPI extends ApiBase {
   /**
    * 发送频道聊天消息
    * 注意： 强列建议过滤掉机器人发送的消息，再进行回应。否则会很容易形成两个机器人循环自言自语导致发送量过大，进而导致机器人被封禁。如果确实需要机器人联动的情况，慎重进行处理，防止形成循环。
@@ -33,14 +27,17 @@ export class MessageAPI {
     tempTargetId?: string
   ): Promise<MessageCreateResponse> {
     const data = (
-      await this.client.post('v3/message/create', {
-        type,
-        target_id: targetId,
-        content,
-        quote,
-        temp_target_id: tempTargetId,
-        nonce: Math.random(),
-      })
+      await this.client.post(
+        'v3/message/create',
+        this.toParams({
+          type,
+          targetId,
+          content,
+          quote,
+          tempTargetId,
+          nonce: Math.random(),
+        })
+      )
     ).data as KAPIResponse<KMessageCreateResponse>;
     if (data.code === 0) {
       return data.data;

@@ -63,22 +63,17 @@ export class GuildApi extends ApiBase {
     page?: number,
     pageSize?: number
   ): Promise<GuildUserListInternal> {
-    const params: {
-      [key: string]: any;
-    } = {
-      guild_id: guildId,
-      channel_id: channelId,
-      search: search,
-      role_id: roleId,
-      mobile_verified: mobileVerified,
-      active_time: activeTime,
-      joined_at: joinedAt,
-      page: page,
-      page_size: pageSize,
-    };
-    Object.keys(params).forEach((key) =>
-      params[key] === undefined ? delete params[key] : {}
-    );
+    const params = this.toParams({
+      guildId,
+      channelId,
+      search,
+      roleId,
+      mobileVerified,
+      activeTime,
+      joinedAt,
+      page,
+      pageSize,
+    });
     const data = (await this.client.get('v3/guild/user-list', params))
       .data as KAPIResponse<KGuildUserListResponse>;
     if (data.code === 0) {
@@ -104,11 +99,10 @@ export class GuildApi extends ApiBase {
     userId?: string
   ): Promise<boolean> {
     const data = (
-      await this.client.post('v3/guild/nickname', {
-        guild_id: guildId,
-        nickname,
-        user_id: userId,
-      })
+      await this.client.post(
+        'v3/guild/nickname',
+        this.toParams({ guildId, nickname, userId })
+      )
     ).data as KAPIResponse<never>;
     if (data.code === 0) {
       return true;

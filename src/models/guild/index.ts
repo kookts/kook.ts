@@ -19,7 +19,7 @@ export class Guild extends BaseModel {
   welcomeChannelId?: string;
   roles?: [KRole];
   channels?: [Channel];
-  constructor(data: KGuildInterface, client: BaseClient) {
+  constructor(data: KGuild, client: BaseClient) {
     super(data, client);
     this.id = data.id;
   }

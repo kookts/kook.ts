@@ -1,12 +1,26 @@
+import { SnakeCasedPropertiesDeep } from 'type-fest';
 import { BaseClient } from '../client/base.js';
 import { BaseModel, KBaseModel } from '../models/base.js';
 import { KAPIMultiPage, KAPIResponse } from './types.js';
+import decamelizeKeys from 'decamelize-keys';
 
 export class ApiBase {
   protected client: BaseClient;
 
   constructor(client: BaseClient) {
     this.client = client;
+  }
+
+  /**
+   *
+   * @param params to snake params and remove empty keys
+   * @returns
+   */
+  toParams<T = unknown>(params: T): SnakeCasedPropertiesDeep<T> {
+    Object.keys(params).forEach((key) =>
+      params[key] === undefined ? delete params[key] : {}
+    );
+    return decamelizeKeys(params, { deep: true, separator: '_' }) as any;
   }
 
   toMultipage<K extends KAPIMultiPage<KBaseModel>, T extends BaseModel>(
