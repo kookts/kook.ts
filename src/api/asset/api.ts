@@ -2,10 +2,7 @@ import FormData, { Stream } from 'form-data';
 import { BaseClient } from '../../client/index.js';
 import RequestError from '../../models/error/RequestError.js';
 import { KAPIResponse } from '../types.js';
-import {
-  AssetCreateResponseInternal,
-  KAssetCreateResponse,
-} from './types.js';
+import { AssetCreateResponseInternal, KAssetCreateResponse } from './types.js';
 
 export class AssetAPI {
   private self: BaseClient;

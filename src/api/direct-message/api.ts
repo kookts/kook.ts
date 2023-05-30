@@ -1,9 +1,8 @@
-import { BaseClient } from "../../client/base.js";
-import RequestError from "../../models/error/RequestError.js";
-import { GuildUser, KGuildUserData } from "../../models/user/guild.js";
-import { KAPIResponse } from "../types.js";
-import { KDirectMessageCreateResponse } from "./types.js";
-
+import { BaseClient } from '../../client/base.js';
+import RequestError from '../../models/error/RequestError.js';
+import { GuildUser, KGuildUserData } from '../../models/user/guild.js';
+import { KAPIResponse } from '../types.js';
+import { KDirectMessageCreateResponse } from './types.js';
 
 export class DirectMessageAPI {
   private client: BaseClient;
