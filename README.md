@@ -23,6 +23,21 @@ Javascript/Typescript SDK For KOOK.
 - [ ] 增加自动跟随限速  
 - [ ] 重复 Object.assign 性能优化
 
+### API TODO
+- [x] channel
+- [ ] asset
+- [ ] channel-role
+- [ ] direct-message
+- [x] guild
+- [ ] guild-mute
+- [ ] guild-role
+- [ ] intimacy
+- [ ] invite
+- [ ] message
+- [ ] user
+- [ ] user-chat
+- [ ] other(to be added)
+
 ## 关于使用 VS Code 进行 Debug 时不显示日志的问题
 
 在 Debug 配置中增加一行`"outputCapture": "std"`即可。
