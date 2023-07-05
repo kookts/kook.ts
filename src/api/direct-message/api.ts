@@ -1,16 +1,67 @@
+import { ApiBase } from '../base.js';
 import { BaseClient } from '../../client/base.js';
 import RequestError from '../../models/error/RequestError.js';
 import { GuildUser, KGuildUserData } from '../../models/user/guild.js';
 import { KAPIResponse } from '../types.js';
 import { KDirectMessageCreateResponse } from './types.js';
 
-export class DirectMessageAPI {
-  private client: BaseClient;
-  constructor(self: BaseClient) {
-    this.client = self;
+export class DirectMessageAPI extends ApiBase {
+
+  /**
+   * 获取私信聊天消息列表
+   * @param chatCode 目标会话 id
+   * @param targetId 目标用户 id，后端会自动创建会话。有此参数之后可不传 `chat_code` 参数
+   * @param msgId 参考消息 id，不传则查询最新消息
+   * @param flag 查询模式，有三种模式可以选择。不传则默认查询最新的消息。before: 查询参考消息之前的消息，不包括参考消息; around: 查询以参考消息为中心，前后一定数量的消息; after: 查询参考消息之后的消息，不包括参考消息.
+   * @param page 目标页数
+   * @param page_size 当前分页消息数量, 默认 50
+   */
+  async list(
+    chatCode?: string,
+    targetId?: string,
+    msgId?: string,
+    flag?: string,
+    page?: number,
+    pageSize?: number,
+  ): Promise<KDirectMessageCreateResponse> {
+    const data = (
+      await this.client.get('v3/direct-message/list', {
+        chat_code: chatCode,
+        target_id: targetId,
+        msg_id: msgId,
+        flag,
+        page,
+        pageSize,
+      })
+    ).data as KAPIResponse<KDirectMessageCreateResponse>;
+    if (data.code === 0) {
+      return data.data;
+    } else {
+      throw new RequestError(data.code, data.message);
+    }
   }
 
-  // TODO: LIST
+  /**
+ * 获取私信聊天消息详情
+ * @param chatCode 目标会话 id / 私信会话 code
+ * @param msgId 私聊消息 id
+ */
+  async view(
+    chatCode: string,
+    msgId: string,
+  ): Promise<KDirectMessageCreateResponse> {
+    const data = (
+      await this.client.get('v3/direct-message/view', {
+        chat_code: chatCode,
+        msg_id: msgId,
+      })
+    ).data as KAPIResponse<KDirectMessageCreateResponse>;
+    if (data.code === 0) {
+      return data.data;
+    } else {
+      throw new RequestError(data.code, data.message);
+    }
+  }
 
   /**
    * 发送私信聊天消息
