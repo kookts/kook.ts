@@ -1,0 +1,47 @@
+name: PushToKook
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push for all branches
+  push:
+   # branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  kook:
+    defaults:
+      run:
+        # important to let the commands run
+        shell: pwsh
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps: 
+      - name: Parse message
+        id: parse  
+        run: |
+           $list= ${{ toJSON( github.event.head_commit.message)}}.split("\n")
+           echo $list
+           $title=$list[0]
+           $message=""
+           For ($i=2; $i -lt $list.Length; $i++) {
+            $message+=$list[$i]
+            $message+="\n"
+            }
+           "title=$title" >> $env:GITHUB_OUTPUT
+           "message=$message" >> $env:GITHUB_OUTPUT
+           
+      - name: Send request to kook
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://www.kookapp.cn/api/v3/message/create'
+          method: 'POST' 
+          customHeaders: '{"Content-Type": "application/json", "Authorization": "${{secrets.PUSH_TO_KOOK_BOT_AUTH}}"}'
+          data: |-
+            {
+              "content": "**更新**\n${{ steps.parse.outputs.title }}\n${{ steps.parse.outputs.message }}", 
+              "type": 9, 
+              "target_id": ${{secrets.KOOK_PUSH_RECEIVING_CHANNEL}}
+            }
