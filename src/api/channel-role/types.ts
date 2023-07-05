@@ -1,36 +1,39 @@
 import { KGuildUserData } from '../../models/index.js';
 
+interface permissionUsers {
+  user: KGuildUserData;
+  allow: number;
+  deny: number;
+}[];
+
+interface permissionOverwrites {
+  roleId: number;
+  allow: number;
+  deny: number;
+}[];
 export interface KChannelRoleListResponse {
-  permissionOverwrites: {
-    roleId: number;
-    allow: number;
-    deny: number;
-  }[];
-  permissionUsers: {
-    user: any;
-    allow: number;
-    deny: number;
-  }[];
+  permissionOverwrites: permissionOverwrites
+  permissionUsers: permissionUsers,
   permissionSync: boolean;
 }
 
 export interface ChannelRoleListResponse {
-  permissionOverwrites: {
-    roleId: number;
-    allow: number;
-    deny: number;
-  }[];
-  permissionUsers: {
-    user: KGuildUserData;
-    allow: number;
-    deny: number;
-  }[];
+  permissionOverwrites: permissionOverwrites
+  permissionUsers: permissionUsers,
   permissionSync: boolean;
 }
 export interface KChannelRoleUpdateResponse {
-  role: number;
+  role_id: number;
   allow: number;
   deny: number;
+}
+export interface ChannelRoleSyncResponse {
+  permissionOverwrites: permissionOverwrites
+  permissionUsers: permissionUsers,
+}
+export interface KChannelRoleSyncResponse {
+  permissionOverwrites: permissionOverwrites
+  permissionUsers: permissionUsers,
 }
 
 export type ChannelRoleUpdateResponse = KChannelRoleUpdateResponse;
