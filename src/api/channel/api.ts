@@ -12,9 +12,9 @@ export class ChannelAPI extends ApiBase {
    */
   async list(guildId: string): Promise<ChannelListResponse> {
     const data = (
-      await this.client.get('v3/channel/list', {
-        guild_id: guildId,
-      })
+      await this.client.get('v3/channel/list', this.toParams({
+        guildId,
+      }))
     ).data as KAPIResponse<KChannelListResponse>;
     if (data.code === 0) {
       return this.toMultipage(data, GuildChannel);
@@ -25,15 +25,15 @@ export class ChannelAPI extends ApiBase {
 
   /**
   * 获取频道详情
-  * @param guildId 服务器id
+  * @param targetId 频道id
   * @param needChildren 是否需要获取子频道。默认为false
   */
-  async view(channelId: string, needChildren = false): Promise<Required<GuildChannel>> {
+  async view(targetId: string, needChildren = false): Promise<Required<GuildChannel>> {
     const data = (
-      await this.client.get('v3/channel/view', {
-        target_id: channelId,
-        need_children: needChildren,
-      })
+      await this.client.get('v3/channel/view', this.toParams({
+        targetId,
+        needChildren,
+      }))
     ).data as KAPIResponse<KGuildChannel>;
     if (data.code === 0) {
       return new GuildChannel(data.data, this.client) as Required<GuildChannel>;
@@ -62,15 +62,15 @@ export class ChannelAPI extends ApiBase {
     isCategory?: number,
   ): Promise<Required<GuildChannel>> {
     const data = (
-      await this.client.post('v3/channel/create', {
-        guild_id: guildId,
+      await this.client.post('v3/channel/create', this.toParams({
+        guildId,
         name,
-        parent_id: parentId,
+        parentId,
         type,
-        limit_amount: limitAmount,
-        voice_quality: voiceQuality,
-        is_category: isCategory,
-      })
+        limitAmount,
+        voiceQuality,
+        isCategory,
+      }))
     ).data as KAPIResponse<KGuildChannel>;
     if (data.code === 0) {
       return new GuildChannel(data.data, this.client) as Required<GuildChannel>;
@@ -103,17 +103,17 @@ export class ChannelAPI extends ApiBase {
     password?: string,
   ): Promise<Required<GuildChannel>> {
     const data = (
-      await this.client.post('v3/channel/update', {
-        channel_id: channelId,
+      await this.client.post('v3/channel/update', this.toParams({
+        channelId,
         name,
         level,
-        parent_id: parentId,
+        parentId,
         topic,
         slow_mode: slowMode,
-        limit_amount: limitAmount,
-        voice_quality: voiceQuality,
+        limitAmount,
+        voiceQuality,
         password,
-      })
+      }))
     ).data as KAPIResponse<KGuildChannel>;
     if (data.code === 0) {
       return new GuildChannel(data.data, this.client) as Required<GuildChannel>;
@@ -128,9 +128,9 @@ export class ChannelAPI extends ApiBase {
    */
   async delete(channelId: string): Promise<boolean> {
     const data = (
-      await this.client.post('v3/channel/delete', {
-        channel_id: channelId,
-      })
+      await this.client.post('v3/channel/delete', this.toParams({
+        channelId,
+      }))
     ).data as KAPIResponse<null>;
     if (data.code === 0) {
       return true;
@@ -145,9 +145,9 @@ export class ChannelAPI extends ApiBase {
   */
   async userList(channelId: string): Promise<GuildUser[]> {
     const data = (
-      await this.client.get('v3/channel/user-list', {
-        channel_id: channelId,
-      })
+      await this.client.get('v3/channel/user-list', this.toParams({
+        channelId,
+      }))
     ).data as KAPIResponse<KGuildUserData[]>;
     if (data.code === 0) {
       const guildUserList = [];
@@ -163,15 +163,15 @@ export class ChannelAPI extends ApiBase {
   /**
    * 语音频道之间移动用户
    * 只能在语音频道之间移动, 用户也必须在其他语音频道在线才能够移动到目标频道.
-   * @param channelId 频道 id, 需要是语音频道
+   * @param targetId 频道 id, 需要是语音频道
    * @param userIds 用户id的数组
    */
-  async moveUser(channelId: string, userIds: string[]): Promise<boolean> {
+  async moveUser(targetId: string, userIds: string[]): Promise<boolean> {
     const data = (
-      await this.client.post('v3/channel/move-user', {
-        target_id: channelId,
-        user_ids: userIds,
-      })
+      await this.client.post('v3/channel/move-user', this.toParams({
+        targetId,
+        userIds,
+      }))
     ).data as KAPIResponse<null>;
     if (data.code === 0) {
       return true;
