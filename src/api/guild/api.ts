@@ -1,4 +1,3 @@
-import { BaseClient } from '../../client/base.js';
 import RequestError from '../../models/error/RequestError.js';
 import { Guild } from '../../models/index.js';
 import { GuildUser } from '../../models/user/guild.js';
@@ -16,9 +15,16 @@ import {
 export class GuildApi extends ApiBase {
   /**
    * 获取当前用户加入的服务器列表
+   * @param page 目标页数
+   * @param pageSize 每页数据数量
+   * @param sort 代表排序的字段, 比如-id 代表 id 按 DESC 排序, id 代表 id 按 ASC 排序. 不一定有, 如果有, 接口中会声明支持的排序字段.
    */
-  async list(): Promise<GuildListResponse> {
-    const data = (await this.client.get('v3/guild/list', {}))
+  async list(page: number, pageSize: number, sort: string): Promise<GuildListResponse> {
+    const data = (await this.client.get('v3/guild/list', this.toParams({
+      page,
+      pageSize,
+      sort
+    })))
       .data as KAPIResponse<KGuildListResponse>;
     if (data.code === 0) {
       return this.toMultipage(data, Guild);
@@ -27,9 +33,13 @@ export class GuildApi extends ApiBase {
     }
   }
 
+  /**
+  * 获取服务器详情
+  * @param guildId 服务器 Id
+  */
   async view(guildId: string): Promise<GuildViewResponse> {
     const data = (await (
-      await this.client.get('v3/guild/view', { guildId })
+      await this.client.get('v3/guild/view', this.toParams({ guildId }))
     ).data) as KAPIResponse<KGuildViewResponse>;
 
     if (data.code == 0) {
@@ -50,6 +60,7 @@ export class GuildApi extends ApiBase {
    * @param joinedAt 根据加入时间排序，`0`是顺序排列，`1`是倒序排列
    * @param page 目标页
    * @param pageSize 每页数据数量
+   * @param filterUserId 获取指定 id 所属用户的信息
    * @return 用户列表
    */
   async userList(
@@ -61,7 +72,8 @@ export class GuildApi extends ApiBase {
     activeTime?: boolean,
     joinedAt?: boolean,
     page?: number,
-    pageSize?: number
+    pageSize?: number,
+    filterUserId?: string,
   ): Promise<GuildUserListInternal> {
     const params = this.toParams({
       guildId,
@@ -73,6 +85,7 @@ export class GuildApi extends ApiBase {
       joinedAt,
       page,
       pageSize,
+      filterUserId,
     });
     const data = (await this.client.get('v3/guild/user-list', params))
       .data as KAPIResponse<KGuildUserListResponse>;
@@ -89,9 +102,9 @@ export class GuildApi extends ApiBase {
 
   /**
    * 修改服务器中用户的昵称
-   * @param guildId 服务器的 ID
-   * @param userId 要修改昵称的目标用户 ID，不传则修改当前登陆用户的昵称
+   * @param guildId 服务器的 Id
    * @param nickname 昵称，2 - 64 长度，不传则清空昵称
+   * @param userId 要修改昵称的目标用户 Id，不传则修改当前登陆用户的昵称
    */
   async nickname(
     guildId: string,
@@ -111,11 +124,15 @@ export class GuildApi extends ApiBase {
     }
   }
 
+  /**
+  * 离开服务器
+  * @param guildId 服务器的 Id
+  */
   async leave(guildId: string): Promise<boolean> {
     const data = (
-      await this.client.post('v3/guild/leave', {
-        guild_id: guildId,
-      })
+      await this.client.post('v3/guild/leave', this.toParams({
+        guildId,
+      }))
     ).data as KAPIResponse<never>;
     if (data.code === 0) {
       return true;
@@ -124,12 +141,16 @@ export class GuildApi extends ApiBase {
     }
   }
 
+  /**
+  * 踢出服务器
+  * @param guildId 服务器的 Id
+  */
   async kickout(guildId: string, targetId: string): Promise<boolean> {
     const data = (
-      await this.client.post('v3/guild/kickout', {
-        guild_id: guildId,
-        target_id: targetId,
-      })
+      await this.client.post('v3/guild/kickout', this.toParams({
+        guildId,
+        targetId,
+      }))
     ).data as KAPIResponse<never>;
     if (data.code === 0) {
       return true;
