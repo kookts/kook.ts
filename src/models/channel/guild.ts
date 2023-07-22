@@ -5,8 +5,8 @@ import { BaseChannel, BaseChannelInterface } from "./base.js";
 
 
 export class GuildChannel extends BaseChannel {
-  name?: string;
   guild: Guild;
+  name?: string;
   master?: GuildUser;
   parentId?: string;
   topic?: string;
