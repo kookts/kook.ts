@@ -26,14 +26,14 @@ Javascript/Typescript SDK For KOOK.
 ### API TODO
 - [x] channel
 - [ ] asset
-- [ ] channel-role
+- [ ongoing ] channel-role
 - [ ] direct-message
 - [x] guild
 - [ ] guild-mute
 - [ ] guild-role
 - [ ] intimacy
 - [ ] invite
-- [ ] message
+- [ ongoingn ] message
 - [ ] user
 - [ ] user-chat
 - [ ] other(to be added)
