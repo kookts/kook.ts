@@ -1,8 +1,7 @@
-import { BaseClient } from "../../client/base.js";
-import { Guild } from "../guild/index.js";
-import { GuildUser } from "../user/guild.js";
-import { BaseChannel, BaseChannelInterface } from "./base.js";
-
+import { BaseClient } from '../../client/base.js';
+import { Guild } from '../guild/index.js';
+import { GuildUser } from '../user/guild.js';
+import { BaseChannel, BaseChannelInterface } from './base.js';
 
 export class GuildChannel extends BaseChannel {
   guild: Guild;
@@ -11,10 +10,14 @@ export class GuildChannel extends BaseChannel {
   parentId?: string;
   topic?: string;
   isCategory?: boolean;
-  constructor(data: KGuildChannel, client: BaseClient) {
+  constructor(data: KGuildChannel, client: BaseClient, guild?: Guild) {
     super(data, client);
     Object.assign(this, data);
-    this.guild = new Guild({ id: data.guildId }, client);
+    if (typeof guild !== 'undefined') {
+      this.guild = guild;
+    } else {
+      this.guild = new Guild({ id: data.guildId }, client);
+    }
     this.parentId = data.parentId;
     this.isCategory = data.isCategory;
     if (data.masterId)

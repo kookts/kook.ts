@@ -1,20 +1,20 @@
 import { CamelCasedPropertiesDeep } from 'type-fest';
 import { BaseClient } from '../../client/index.js';
-import { BaseModel, KBaseModel } from '../base.js';
+import { BaseModel, KBaseInterface } from '../base.js';
 
-export class BaseUser extends BaseModel implements KBaseUserData {
+export class BaseUser extends BaseModel implements KBaseUser {
   username?: string;
   identifyNum?: string;
   online?: boolean;
   avatar?: string;
   bot?: boolean;
-  constructor(data: KBaseUserData, client: BaseClient) {
+  constructor(data: KBaseUser, client: BaseClient) {
     super(data, client);
     Object.assign(this, data);
   }
 }
 
-export interface KBaseUserRaw extends KBaseModel {
+interface KBaseUserInterface extends KBaseInterface {
   /**
    * 用户名
    */
@@ -22,7 +22,7 @@ export interface KBaseUserRaw extends KBaseModel {
   /**
    * 用户名 # 后的 4 位识别 id
    */
-  identify_num: string;
+  identifyNum: string;
   /**
    * 是否在线
    */
@@ -37,5 +37,5 @@ export interface KBaseUserRaw extends KBaseModel {
   bot: boolean;
 }
 
-export type KBaseUserData = Partial<CamelCasedPropertiesDeep<KBaseUserRaw>> &
-  Pick<CamelCasedPropertiesDeep<KBaseUserRaw>, 'id'>;
+export type KBaseUser = Partial<KBaseUserInterface> &
+  Pick<KBaseUserInterface, 'id'>;

@@ -1,13 +1,11 @@
-import { BaseClient } from '../../client/index.js';
 import RequestError from '../../models/error/RequestError.js';
 import { KAPIResponse } from '../types.js';
-import {
-  KMessageCreateResponse,
-  MessageCreateResponse,
-  MessageType,
-} from './types.js';
-import { GuildUser, KGuildUserData } from '../../models/user/guild.js';
+import { KMessageCreateResponse, MessageCreateResponse } from './types.js';
+import { GuildUser, KGuildUser } from '../../models/user/guild.js';
 import { ApiBase } from '../base.js';
+import { MessageType } from '../../models/message/types.js';
+import { KBaseMessage } from '../../models/message/base.js';
+import { GuildMessage } from '../../models/message/guild.js';
 
 export class MessageAPI extends ApiBase {
   /**
@@ -90,6 +88,18 @@ export class MessageAPI extends ApiBase {
     }
   }
 
+  async view(msgId: string): Promise<Required<GuildMessage>> {
+    const data = (
+      await this.client.get('v3/message/view', this.toParams({ msgId }))
+    ).data as KAPIResponse<KBaseMessage>;
+    if (data.code === 0) {
+      // TODO: private messsage
+      return new GuildMessage(data.data as any, this.client) as Required<GuildMessage>;
+    } else {
+      throw new RequestError(data.code, data.message);
+    }
+  }
+
   /**
    * 获取频道消息某回应的用户列表
    * @param msgId 频道消息的id
@@ -104,7 +114,7 @@ export class MessageAPI extends ApiBase {
         msg_id: msgId,
         emoji,
       })
-    ).data as KAPIResponse<KGuildUserData[]>;
+    ).data as KAPIResponse<KGuildUser[]>;
     if (data.code === 0) {
       return data.data.map((e) => new GuildUser(e, this.client)) as any;
     } else {

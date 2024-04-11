@@ -1,12 +1,11 @@
 import { ApiBase } from '../base.js';
 import { BaseClient } from '../../client/base.js';
 import RequestError from '../../models/error/RequestError.js';
-import { GuildUser, KGuildUserData } from '../../models/user/guild.js';
+import { GuildUser, KGuildUser } from '../../models/user/guild.js';
 import { KAPIResponse } from '../types.js';
 import { KDirectMessageCreateResponse } from './types.js';
 
 export class DirectMessageAPI extends ApiBase {
-
   /**
    * 获取私信聊天消息列表
    * @param chatCode 目标会话 id
@@ -22,7 +21,7 @@ export class DirectMessageAPI extends ApiBase {
     msgId?: string,
     flag?: string,
     page?: number,
-    pageSize?: number,
+    pageSize?: number
   ): Promise<KDirectMessageCreateResponse> {
     const data = (
       await this.client.get('v3/direct-message/list', {
@@ -42,13 +41,13 @@ export class DirectMessageAPI extends ApiBase {
   }
 
   /**
- * 获取私信聊天消息详情
- * @param chatCode 目标会话 id / 私信会话 code
- * @param msgId 私聊消息 id
- */
+   * 获取私信聊天消息详情
+   * @param chatCode 目标会话 id / 私信会话 code
+   * @param msgId 私聊消息 id
+   */
   async view(
     chatCode: string,
-    msgId: string,
+    msgId: string
   ): Promise<KDirectMessageCreateResponse> {
     const data = (
       await this.client.get('v3/direct-message/view', {
@@ -153,7 +152,7 @@ export class DirectMessageAPI extends ApiBase {
         msg_id: msgId,
         emoji,
       })
-    ).data as KAPIResponse<KGuildUserData[]>;
+    ).data as KAPIResponse<KGuildUser[]>;
     if (data.code === 0) {
       return data.data.map(
         (e) => new GuildUser(e, this.client) as Required<GuildUser>

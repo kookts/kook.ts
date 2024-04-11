@@ -36,7 +36,7 @@ abstract class BaseReceiver {
   protected eventProcess(packet: KEventPacket): void {
     this.client.emit('raw', packet.d);
     const result = parsePacket(packet.d, this.client);
-    this.client.emit(result.type, result);
+    // this.client.emit(result.type, result);
   }
 }
 

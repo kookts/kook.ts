@@ -1,21 +1,25 @@
 import { BaseClient } from '../../client/index.js';
 import { Guild } from '../guild/index.js';
-import { BaseUser, KBaseUserData } from './base.js';
+import { BaseUser, KBaseUser } from './base.js';
 
 export class GuildUser extends BaseUser {
   nickname?: string;
   guild: Guild;
-  constructor(data: KGuildUserData, client: BaseClient) {
+  constructor(data: KGuildUser, client: BaseClient, guild?: Guild) {
     super(data, client);
     this.nickname = data.nickname;
-    this.guild = new Guild({ id: data.guildId }, client);
+    if (typeof guild !== 'undefined') {
+      this.guild = guild;
+    } else {
+      this.guild = new Guild({ id: data.guildId }, client);
+    }
   }
 }
 
-interface KGuildUser extends KBaseUserData {
+interface KGuildUserInterface extends KBaseUser {
   nickname: string;
   guildId: string;
 }
-export type KGuildUserData = Partial<KGuildUser> &
-  Pick<KGuildUser, 'guildId'> &
-  KBaseUserData;
+export type KGuildUser = Partial<KGuildUserInterface> &
+  Pick<KGuildUserInterface, 'guildId'> &
+  KBaseUser;

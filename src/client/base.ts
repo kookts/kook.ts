@@ -51,6 +51,7 @@ export class BaseClient extends EventEmitter2 {
         Authorization: 'Bot ' + this.config.token,
       },
     });
+    // update response data to camel case
     this.axios.interceptors.response.use((response: AxiosResponse) => {
       if (response.data && response.data.code === 0) {
         response.data = toCamelCase(response.data);

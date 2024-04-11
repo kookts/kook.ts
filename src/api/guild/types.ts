@@ -1,10 +1,5 @@
 import { Channel } from '../../models/channel/types.js';
-import {
-  Guild,
-  GuildUser,
-  KGuild,
-  KGuildUserData,
-} from '../../models/index.js';
+import { Guild, GuildUser, KGuild, KGuildUser } from '../../models/index.js';
 import { Role } from '../guild-role/types.js';
 import { KAPIMultiPage } from '../types.js';
 
@@ -16,12 +11,14 @@ export type KGuildViewResponse = Required<KGuild>;
 
 export type GuildViewResponse = Required<Guild>;
 
-export interface KGuildUserListResponse extends KAPIMultiPage<KGuildUserData> {
+export interface KGuildUserListResponse extends KAPIMultiPage<KGuildUser> {
   userCount: number;
   onlineCount: number;
   offlineCount: number;
 }
 
-export interface GuildUserListInternal {
-  items: GuildUser[]; // TODO
+export interface GuildUserListResponse extends KAPIMultiPage<GuildUser> {
+  userCount: number;
+  onlineCount: number;
+  offlineCount: number;
 }

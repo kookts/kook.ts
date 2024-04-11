@@ -35,7 +35,7 @@ Javascript/Typescript SDK For KOOK.
 - [ ] guild-role
 - [ ] intimacy
 - [ ] invite
-- [ ongoingn ] message
+- [ ongoing ] message
 - [ ] user
 - [ ] user-chat
 - [ ] other(to be added)
@@ -44,10 +44,5 @@ Javascript/Typescript SDK For KOOK.
 
 在 Debug 配置中增加一行`"outputCapture": "std"`即可。
 
-## 变量命名
 
-KGuildUser: object from kook with camel case(mainly for interface)
 
-KGuildUserRaw: object from kook with snake case(do not use unless required)
-
-KGuildUserData: object from kook with camel case & required data set(e.g.: id)

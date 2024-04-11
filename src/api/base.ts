@@ -1,6 +1,6 @@
 import { SnakeCasedPropertiesDeep } from 'type-fest';
 import { BaseClient } from '../client/base.js';
-import { BaseModel, KBaseModel } from '../models/base.js';
+import { BaseModel, KBaseInterface } from '../models/base.js';
 import { KAPIMultiPage, KAPIResponse } from './types.js';
 import decamelizeKeys from 'decamelize-keys';
 
@@ -23,7 +23,7 @@ export class ApiBase {
     return decamelizeKeys(params, { deep: true, separator: '_' }) as any;
   }
 
-  toMultipage<K extends KAPIMultiPage<KBaseModel>, T extends BaseModel>(
+  toMultipage<K extends KAPIMultiPage<KBaseInterface>, T extends BaseModel>(
     data: KAPIResponse<K>,
     clss: new (data: any, client: any) => T
   ): KAPIMultiPage<T> {
