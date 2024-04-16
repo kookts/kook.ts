@@ -4,8 +4,12 @@ import { KMessageCreateResponse, MessageCreateResponse } from './types.js';
 import { GuildUser, KGuildUser } from '../../models/user/guild.js';
 import { ApiBase } from '../base.js';
 import { MessageType } from '../../models/message/types.js';
-import { KBaseMessage } from '../../models/message/base.js';
-import { GuildMessage } from '../../models/message/guild.js';
+import { BaseMessage, KBaseMessage } from '../../models/message/base.js';
+import {
+  GuildMessage,
+  GuildMessageFactory,
+  KGuildMessage,
+} from '../../models/message/guild.js';
 
 export class MessageAPI extends ApiBase {
   /**
@@ -91,36 +95,37 @@ export class MessageAPI extends ApiBase {
   async view(msgId: string): Promise<Required<GuildMessage>> {
     const data = (
       await this.client.get('v3/message/view', this.toParams({ msgId }))
-    ).data as KAPIResponse<KBaseMessage>;
+    ).data as KAPIResponse<KGuildMessage>;
     if (data.code === 0) {
-      // TODO: private messsage
-      return new GuildMessage(data.data as any, this.client) as Required<GuildMessage>;
+      // only guild messsage! private message is at direct-message/view
+      const channel = await this.client.Api.channel.view(data.data.channelId);
+      return GuildMessageFactory.create(data.data, this.client, channel);
     } else {
       throw new RequestError(data.code, data.message);
     }
   }
 
   /**
-   * 获取频道消息某回应的用户列表
+   * 获取频道消息某回应的用户列表  // TODO
    * @param msgId 频道消息的id
    * @param emoji emoji的id, 可以为GuilEmoji或者Emoji
    */
-  async reactionList(
-    msgId: string,
-    emoji: string
-  ): Promise<GuildUser & { reactionTime: number }[]> {
-    const data = (
-      await this.client.get('v3/message/reaction-list', {
-        msg_id: msgId,
-        emoji,
-      })
-    ).data as KAPIResponse<KGuildUser[]>;
-    if (data.code === 0) {
-      return data.data.map((e) => new GuildUser(e, this.client)) as any;
-    } else {
-      throw new RequestError(data.code, data.message);
-    }
-  }
+  // async reactionList(
+  //   msgId: string,
+  //   emoji: string
+  // ): Promise<GuildUser & { reactionTime: number }[]> {
+  //   const data = (
+  //     await this.client.get('v3/message/reaction-list', {
+  //       msg_id: msgId,
+  //       emoji,
+  //     })
+  //   ).data as KAPIResponse<KGuildUser[]>;
+  //   if (data.code === 0) {
+  //     return data.data.map((e) => new GuildUser(e, this.client)) as any;
+  //   } else {
+  //     throw new RequestError(data.code, data.message);
+  //   }
+  // }
 
   /**
    * 给某个消息添加回应

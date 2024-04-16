@@ -4,6 +4,7 @@ import RequestError from '../../models/error/RequestError.js';
 import { GuildUser, KGuildUser } from '../../models/user/guild.js';
 import { KAPIResponse } from '../types.js';
 import { KDirectMessageCreateResponse } from './types.js';
+import { BaseUser, BaseUserFactory } from '../../models/index.js';
 
 export class DirectMessageAPI extends ApiBase {
   /**
@@ -139,14 +140,14 @@ export class DirectMessageAPI extends ApiBase {
   }
 
   /**
-   * 获取频道消息某回应的用户列表
+   * 获取频道消息某回应的用户列表 // TODO
    * @param msgId 频道消息的id
    * @param emoji emoji的id, 可以为GuilEmoji或者Emoji
    */
   async reactionList(
     msgId: string,
     emoji: string
-  ): Promise<Required<GuildUser>[]> {
+  ): Promise<Required<BaseUser>[]> {
     const data = (
       await this.client.get('v3/direct-message/reaction-list', {
         msg_id: msgId,
@@ -155,7 +156,7 @@ export class DirectMessageAPI extends ApiBase {
     ).data as KAPIResponse<KGuildUser[]>;
     if (data.code === 0) {
       return data.data.map(
-        (e) => new GuildUser(e, this.client) as Required<GuildUser>
+        (e) => BaseUserFactory.create(e, this.client) as Required<GuildUser>
       );
     } else {
       throw new RequestError(data.code, data.message);

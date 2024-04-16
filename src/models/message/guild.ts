@@ -1,43 +1,30 @@
 import { BaseClient } from '../../client/base.js';
+import { BaseModelFactory, KPartialModel } from '../base.js';
 import { GuildChannel } from '../channel/guild.js';
 import { Guild } from '../guild/index.js';
-import { GuildUser, KGuildUser } from '../user/guild.js';
+import { GuildUser, GuildUserFactory } from '../user/guild.js';
 import { BaseMessage, KBaseMessage } from './base.js';
-import { KTextMessageEvent } from './types.js';
 
 export class GuildMessage extends BaseMessage {
-  declare readonly channel: GuildChannel;
-  declare readonly guild: Guild;
-  constructor(data: KGuildMessageInterface, client: BaseClient) {
-    super(data, client);
-    this.channel = new GuildChannel(
-      {
-        // TODO! Fix this
-        id: (data.extra as any).channelId!,
-        name: data.extra.channelName!,
-        guildId: data.extra.guildId,
-      },
-      client
-    );
-    this.guild = this.channel.guild;
-    this.user = new GuildUser(
-      {
-        ...data.extra.author,
-        guildId: data.extra.guildId,
-      },
-      client
-    );
+  declare channel: GuildChannel;
+  declare guild: Guild;
+}
+export class GuildMessageFactory extends BaseModelFactory(GuildMessage) {
+  public static create(
+    data: KGuildMessage,
+    client: BaseClient,
+    channel: GuildChannel
+  ): Required<GuildMessage> {
+    let base = super.create(data, client) as GuildMessage;
+    base.channel = channel;
+    base.guild = base.channel.guild;
+    base.user = GuildUserFactory.createById(data.author.id, base.guild, client);
+    return base as Required<GuildMessage>;
   }
 }
 
 interface KGuildMessageInterface extends KBaseMessage {
-  extra: {
-    guildId: string;
-    channelName: string;
-    mention: [];
-    mentionAll: boolean;
-    mentionRoles: [];
-    mentionHere: boolean;
-    author: KGuildUser;
-  };
+  channelId: string;
 }
+
+export type KGuildMessage = KPartialModel<KGuildMessageInterface>;

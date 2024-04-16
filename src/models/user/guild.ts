@@ -1,18 +1,32 @@
 import { BaseClient } from '../../client/index.js';
-import { Guild } from '../guild/index.js';
+import { BaseModelFactory } from '../base.js';
+import { Guild, GuildFactory } from '../guild/index.js';
 import { BaseUser, KBaseUser } from './base.js';
 
 export class GuildUser extends BaseUser {
   nickname?: string;
   guild: Guild;
-  constructor(data: KGuildUser, client: BaseClient, guild?: Guild) {
-    super(data, client);
-    this.nickname = data.nickname;
-    if (typeof guild !== 'undefined') {
-      this.guild = guild;
-    } else {
-      this.guild = new Guild({ id: data.guildId }, client);
-    }
+}
+
+export class GuildUserFactory extends BaseModelFactory(GuildUser) {
+  public static create(
+    data: KGuildUser,
+    client: BaseClient,
+    guild: Guild
+  ): Required<GuildUser> {
+    let base = super.create(data, client);
+    base.guild = guild;
+    base.nickname = data.nickname;
+    return base as Required<GuildUser>;
+  }
+  public static createById(
+    id: string,
+    guild: Guild,
+    client: BaseClient
+  ): GuildUser {
+    let base = super.create({ id }, client);
+    base.guild = guild;
+    return base;
   }
 }
 

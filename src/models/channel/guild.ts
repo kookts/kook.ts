@@ -1,33 +1,35 @@
 import { BaseClient } from '../../client/base.js';
-import { Guild } from '../guild/index.js';
-import { GuildUser } from '../user/guild.js';
+import { BaseModelFactory } from '../base.js';
+import { Guild, GuildFactory, KGuild } from '../guild/index.js';
+import { GuildUser, GuildUserFactory } from '../user/guild.js';
 import { BaseChannel, BaseChannelInterface } from './base.js';
 
-export class GuildChannel extends BaseChannel {
+export class GuildChannel extends BaseChannel implements KGuild {
+  guildId: string;
+  masterId: string;
   guild: Guild;
   name?: string;
   master?: GuildUser;
   parentId?: string;
   topic?: string;
   isCategory?: boolean;
-  constructor(data: KGuildChannel, client: BaseClient, guild?: Guild) {
-    super(data, client);
-    Object.assign(this, data);
-    if (typeof guild !== 'undefined') {
-      this.guild = guild;
-    } else {
-      this.guild = new Guild({ id: data.guildId }, client);
-    }
-    this.parentId = data.parentId;
-    this.isCategory = data.isCategory;
-    if (data.masterId)
-      this.master = new GuildUser(
-        { id: data.masterId, guildId: this.guild.id },
-        client
-      );
-  }
 }
 
+export class GuildChannelFactory extends BaseModelFactory(GuildChannel) {
+  public static create(data: KGuildChannel, client: BaseClient): GuildChannel {
+    let guildChannel = super.create(data, client);
+    guildChannel.guild = GuildFactory.createById({ id: data.guildId }, client);
+    guildChannel.parentId = data.parentId;
+    guildChannel.isCategory = data.isCategory;
+    if (data.masterId)
+      guildChannel.master = GuildUserFactory.createById(
+        { id: data.masterId, guildId: data.guildId },
+        client
+      );
+
+    return guildChannel;
+  }
+}
 interface KGuildChannelInterface extends BaseChannelInterface {
   guildId: string;
   masterId: string;

@@ -26,7 +26,7 @@ export abstract class BaseMessage extends BaseModel {
     mentionRolePart: any[];
   };
 
-  // declare channel: BaseChannel;
+  declare channel: BaseChannel;
   constructor(data: KBaseMessage, client: BaseClient) {
     super(data, client);
     this.user = new BaseUser(data.author, client);

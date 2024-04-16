@@ -1,6 +1,5 @@
-import { CamelCasedPropertiesDeep } from 'type-fest';
 import { BaseClient } from '../../client/index.js';
-import { BaseModel, KBaseInterface } from '../base.js';
+import { BaseModel, BaseModelFactory, KBaseInterface } from '../base.js';
 
 export class BaseUser extends BaseModel implements KBaseUser {
   username?: string;
@@ -8,12 +7,17 @@ export class BaseUser extends BaseModel implements KBaseUser {
   online?: boolean;
   avatar?: string;
   bot?: boolean;
-  constructor(data: KBaseUser, client: BaseClient) {
-    super(data, client);
-    Object.assign(this, data);
-  }
 }
 
+export class BaseUserFactory extends BaseModelFactory(BaseUser) {
+  public static create(
+    data: KBaseUser,
+    client: BaseClient
+  ): Required<BaseUser> {
+    let base = super.create(data, client);
+    return base as Required<BaseUser>;
+  }
+}
 interface KBaseUserInterface extends KBaseInterface {
   /**
    * 用户名

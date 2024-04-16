@@ -21,3 +21,7 @@ client.on('message.*', (data: GuildMessage) => {
 client.connect();
 
 client.Api.guild.view('1446123333814457').then(console.log);
+// client.Api.directMessage.view('1446123333814457').then(console.log);
+// client.Api.message
+//   .view('99869718-e4ad-43df-b35e-366b6f715b8d')
+//   .then(console.log);

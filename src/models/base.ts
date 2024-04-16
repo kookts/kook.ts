@@ -3,13 +3,30 @@ import { BaseClient } from '../client/base.js';
 export class BaseModel implements KBaseInterface {
   client!: BaseClient;
   id!: string;
-  initialized: boolean;  // mark if this object is fully initialized(maybe id only)
+  _initialized: boolean; // mark if this object is fully initialized(maybe id only)
   [key: string]: unknown;
   constructor(data: KBaseInterface, client: BaseClient) {
-    Object.assign(this, data);
     this.client = client;
-    this.initialized = false;
+    this.id = data.id;
+    this._initialized = false;
   }
+}
+
+export function BaseModelFactory<T extends BaseModel>(
+  constructor: new (...args: any[]) => T
+) {
+  abstract class BaseModelFactory {
+    public static create(
+      data: KBaseInterface,
+      client: BaseClient,
+      ...args: any
+    ): T {
+      let base = new constructor(data, client);
+      Object.assign(base, data);
+      return base;
+    }
+  }
+  return BaseModelFactory;
 }
 
 /**

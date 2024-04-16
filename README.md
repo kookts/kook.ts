@@ -21,7 +21,7 @@ Javascript/Typescript SDK For KOOK.
 - [ ] 增加 API
 - [ ] 增加消息队列
 - [ ] 增加自动跟随限速
-- [ ] 重复 Object.assign 性能优化
+- [x] 重复 Object.assign 性能优化
 
 ### API TODO
 

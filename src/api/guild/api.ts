@@ -1,5 +1,5 @@
 import RequestError from '../../models/error/RequestError.js';
-import { Guild, KGuild } from '../../models/index.js';
+import { Guild, GuildFactory, KGuild } from '../../models/index.js';
 import { GuildUser } from '../../models/user/guild.js';
 import { ApiBase } from '../base.js';
 import { KAPIResponse } from '../types.js';
@@ -51,7 +51,7 @@ export class GuildApi extends ApiBase {
     ).data) as KAPIResponse<Required<KGuild>>;
 
     if (data.code == 0) {
-      return new Guild(data.data, this.client) as Required<Guild>;
+      return GuildFactory.create(data.data, this.client);
     } else {
       throw new RequestError(data.code, data.message);
     }
