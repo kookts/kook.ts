@@ -1,13 +1,15 @@
-import { BaseClient } from "./base.js";
+import { GuildChannel } from '../models/channel/guild.js';
+import { Guild } from '../models/index.js';
+import { BaseClient } from './base.js';
 
-class ObjectCache {
-  private cache: Map<string, any> = new Map<string, any>();
+class ObjectCache<T> {
+  private cache: Map<string, T> = new Map<string, T>();
 
-  public set(key: string, value: any): void {
+  public set(key: string, value: T): void {
     this.cache.set(key, value);
   }
 
-  public get(key: string): any {
+  public get(key: string): T {
     return this.cache.get(key);
   }
 
@@ -21,7 +23,7 @@ class ObjectCache {
 }
 
 export class Cache {
-  guild: ObjectCache = new ObjectCache();
-  channel: ObjectCache = new ObjectCache();
+  guild: ObjectCache<Guild> = new ObjectCache();
+  channel: ObjectCache<GuildChannel> = new ObjectCache();
   constructor(client: BaseClient) {}
 }

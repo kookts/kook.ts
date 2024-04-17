@@ -17,6 +17,11 @@ export class BaseUserFactory extends BaseModelFactory(BaseUser) {
     let base = super.create(data, client);
     return base as Required<BaseUser>;
   }
+
+  public static createById(id: string, client: BaseClient): BaseUser {
+    let base = super.create({ id }, client);
+    return base;
+  }
 }
 interface KBaseUserInterface extends KBaseInterface {
   /**
