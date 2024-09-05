@@ -18,16 +18,23 @@ export class GuildChannel extends BaseChannel implements KGuild {
 export class GuildChannelFactory extends BaseModelFactory(GuildChannel) {
   public static create(data: KGuildChannel, client: BaseClient): GuildChannel {
     let guildChannel = super.create(data, client);
-    guildChannel.guild = GuildFactory.createById({ id: data.guildId }, client);
+    guildChannel.guild = GuildFactory.createById(data.guildId, client);
     guildChannel.parentId = data.parentId;
     guildChannel.isCategory = data.isCategory;
     if (data.masterId)
       guildChannel.master = GuildUserFactory.createById(
-        { id: data.masterId, guildId: data.guildId },
+        data.masterId,
+        guildChannel.guild,
         client
       );
 
     return guildChannel;
+  }
+
+  public static createById(id: string, guild: Guild, client: BaseClient) {
+    let channel = super.create({ id }, client);
+    channel.guild = guild;
+    return channel;
   }
 }
 interface KGuildChannelInterface extends BaseChannelInterface {

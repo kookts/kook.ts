@@ -6,17 +6,8 @@ import {
   KBaseInterface,
   KPartialModel,
 } from '../base.js';
-import {
-  GuildChannel,
-  GuildChannelFactory,
-  KGuildChannel,
-} from '../channel/guild.js';
-import {
-  BaseUser,
-  BaseUserFactory,
-  GuildUser,
-  GuildUserFactory,
-} from '../user/index.js';
+import { GuildChannel, KGuildChannel } from '../channel/guild.js';
+import { BaseUser, BaseUserFactory } from '../user/index.js';
 
 export * from './types.js';
 
@@ -79,9 +70,9 @@ export class GuildFactory extends BaseModelFactory(Guild) {
     guild._initialized = true;
     return guild as Required<Guild>;
   }
-  static createById(data: KGuild, client: BaseClient): Guild {
-    let guild = super.create(data, client) as Guild;
-    guild.id = data.id;
+  static createById(id: string, client: BaseClient, data?: Partial<KGuild>): Guild {
+    let guild = super.create({ id, ...data }, client) as Guild;
+    guild.id = id;
     guild._initialized = false;
     return guild;
   }

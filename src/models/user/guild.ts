@@ -22,9 +22,10 @@ export class GuildUserFactory extends BaseModelFactory(GuildUser) {
   public static createById(
     id: string,
     guild: Guild,
-    client: BaseClient
+    client: BaseClient,
+    data?: KGuildUser
   ): GuildUser {
-    let base = super.create({ id }, client);
+    let base = super.create({ id, ...data }, client);
     base.guild = guild;
     return base;
   }
