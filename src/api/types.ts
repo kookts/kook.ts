@@ -14,5 +14,6 @@ export interface KAPIMultiPage<KItemType> {
     pageSize: number;
     total: number;
   };
+  sort: Record<string, number>;
   [key: string]: unknown;
 }

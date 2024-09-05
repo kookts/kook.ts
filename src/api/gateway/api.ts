@@ -1,8 +1,7 @@
-import { BaseClient } from "../../client/index.js";
-import RequestError from "../../models/error/RequestError.js";
-import { KAPIResponse } from "../types.js";
-import { KGatewayResponse } from "./types.js";
-
+import { BaseClient } from '../../client/index.js';
+import RequestError from '../../models/error/RequestError.js';
+import { KAPIResponse } from '../types.js';
+import { KGatewayResponse } from './types.js';
 
 export class GatewayAPI {
   private self: BaseClient;

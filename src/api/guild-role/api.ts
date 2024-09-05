@@ -1,5 +1,5 @@
 import { BaseClient } from '../../client/index.js';
-import RequestError from '../../models/Error/RequestError.js';
+import RequestError from '../../models/error/RequestError.js';
 import { KAPIResponse } from '../types.js';
 import {
   KGrantUserRoleResponse,

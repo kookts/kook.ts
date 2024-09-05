@@ -1,29 +1,24 @@
-import { KGuildRaw } from '../../models/guild/index.js';
-import { GuildUser, KGuildUserData } from '../../models/index.js';
+import { Channel } from '../../models/channel/types.js';
+import { Guild, GuildUser, KGuild, KGuildUser } from '../../models/index.js';
+import { Role } from '../guild-role/types.js';
 import { KAPIMultiPage } from '../types.js';
 
-export interface KGuildListResponse extends KAPIMultiPage<KGuildRaw> {
-  sort: {
-    id: number;
-  };
-}
+export interface KGuildListResponse extends KAPIMultiPage<Required<KGuild>> {}
 
-export interface KGuildUserListResponse extends KAPIMultiPage<KGuildUserData> {
+export interface GuildListResponse extends KAPIMultiPage<Guild> {}
+
+export type KGuildViewResponse = Required<KGuild>;
+
+export type GuildViewResponse = Required<Guild>;
+
+export interface KGuildUserListResponse extends KAPIMultiPage<KGuildUser> {
   userCount: number;
   onlineCount: number;
   offlineCount: number;
 }
 
-export interface GuildListResponseInternal {
-  items: KGuildRaw[];
-  meta: {
-    page: number;
-    pageSize: number;
-    pageTotal: number;
-    total: number;
-  };
-}
-
-export interface GuildUserListInternal {
-  items: GuildUser[]; // TODO
+export interface GuildUserListResponse extends KAPIMultiPage<GuildUser> {
+  userCount: number;
+  onlineCount: number;
+  offlineCount: number;
 }

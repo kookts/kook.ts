@@ -1,2 +1,1 @@
-export * from './base.js'
-export * from './message/index.js'
+export * from './base.js';

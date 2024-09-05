@@ -1,30 +1,42 @@
-import { BaseClient } from "../../client/base.js";
-import { Guild } from "../guild/index.js";
-import { GuildUser } from "../user/guild.js";
-import { BaseChannel, BaseChannelInterface } from "./base.js";
+import { BaseClient } from '../../client/base.js';
+import { BaseModelFactory } from '../base.js';
+import { Guild, GuildFactory, KGuild } from '../guild/index.js';
+import { GuildUser, GuildUserFactory } from '../user/guild.js';
+import { BaseChannel, BaseChannelInterface } from './base.js';
 
-
-export class GuildChannel extends BaseChannel {
-  name?: string;
+export class GuildChannel extends BaseChannel implements KGuild {
+  guildId: string;
+  masterId: string;
   guild: Guild;
+  name?: string;
   master?: GuildUser;
   parentId?: string;
   topic?: string;
   isCategory?: boolean;
-  constructor(data: KGuildChannel, client: BaseClient) {
-    super(data, client);
-    Object.assign(this, data);
-    this.guild = new Guild({ id: data.guildId }, client);
-    this.parentId = data.parentId;
-    this.isCategory = data.isCategory;
-    if (data.masterId)
-      this.master = new GuildUser(
-        { id: data.masterId, guildId: this.guild.id },
-        client
-      );
-  }
 }
 
+export class GuildChannelFactory extends BaseModelFactory(GuildChannel) {
+  public static create(data: KGuildChannel, client: BaseClient): GuildChannel {
+    let guildChannel = super.create(data, client);
+    guildChannel.guild = GuildFactory.createById(data.guildId, client);
+    guildChannel.parentId = data.parentId;
+    guildChannel.isCategory = data.isCategory;
+    if (data.masterId)
+      guildChannel.master = GuildUserFactory.createById(
+        data.masterId,
+        guildChannel.guild,
+        client
+      );
+
+    return guildChannel;
+  }
+
+  public static createById(id: string, guild: Guild, client: BaseClient) {
+    let channel = super.create({ id }, client);
+    channel.guild = guild;
+    return channel;
+  }
+}
 interface KGuildChannelInterface extends BaseChannelInterface {
   guildId: string;
   masterId: string;

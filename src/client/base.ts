@@ -7,6 +7,7 @@ import { BaseReceiver } from './event-receiver/base.js';
 import { WebhookReceiver } from './event-receiver/webhook.js';
 import { WebsocketReceiver } from './event-receiver/websocket.js';
 import { ClientConfig } from './types.js';
+import { Cache } from './cache.js';
 
 const logFormat = format.combine(
   format.colorize(),
@@ -23,6 +24,7 @@ export class BaseClient extends EventEmitter2 {
   receiver: BaseReceiver;
   Api: Api;
   logger: Logger;
+  _cache: Cache;  // todo
 
   /**
    * kook机器人实例
@@ -34,9 +36,10 @@ export class BaseClient extends EventEmitter2 {
       ...config.eventEmitterConfig,
     };
     super(config.eventEmitterConfig);
+    this._cache = new Cache(this);
     this.config = JSON.parse(JSON.stringify(config));
     this.logger = createLogger({
-      level: 'info',
+      level: 'debug',
       format: logFormat,
       transports: [new transports.Console()],
       ...config.logConfig,
@@ -51,6 +54,7 @@ export class BaseClient extends EventEmitter2 {
         Authorization: 'Bot ' + this.config.token,
       },
     });
+    // update response data to camel case
     this.axios.interceptors.response.use((response: AxiosResponse) => {
       if (response.data && response.data.code === 0) {
         response.data = toCamelCase(response.data);
@@ -65,21 +69,6 @@ export class BaseClient extends EventEmitter2 {
       default:
         this.receiver = new WebsocketReceiver(this);
     }
-    // switch (this.config.mode) {
-    //   case 'websocket':
-    //     this.messageSource = new WebSocketSource(this);
-    //     break;
-    //   default:
-    //     this.messageSource = new WebhookSource(
-    //       this,
-    //       config as {
-    //         key?: string;
-    //         port: number;
-    //         verifyToken?: string;
-    //       }
-    //     );
-    //     break;
-    // }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types

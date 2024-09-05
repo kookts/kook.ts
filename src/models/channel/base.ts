@@ -1,12 +1,12 @@
-import { BaseClient } from "../../client/index.js";
-import { BaseModel } from "../base.js";
+import { BaseClient } from '../../client/index.js';
+import { BaseModel } from '../base.js';
 
 export abstract class BaseChannel
   extends BaseModel
-  implements BaseChannelInterface {
+  implements BaseChannelInterface
+{
   constructor(base: BaseChannelInterface, client: BaseClient) {
     super(base, client);
-    this.id = base.id;
   }
 
   // abstract send();
