@@ -1,7 +1,16 @@
 import RequestError from '../../models/error/RequestError.js';
 import { KAPIResponse } from '../types.js';
-import { KMessageCreateResponse, MessageCreateResponse } from './types.js';
-import { GuildUser, KGuildUser } from '../../models/user/guild.js';
+import {
+  KMessageCreateResponse,
+  KReactionListResponse,
+  MessageCreateResponse,
+  ReactionInfo,
+} from './types.js';
+import {
+  GuildUser,
+  GuildUserFactory,
+  KGuildUser,
+} from '../../models/user/guild.js';
 import { ApiBase } from '../base.js';
 import { MessageType } from '../../models/message/types.js';
 import { BaseMessage, KBaseMessage } from '../../models/message/base.js';
@@ -10,6 +19,7 @@ import {
   GuildMessageFactory,
   KGuildMessage,
 } from '../../models/message/guild.js';
+import { GuildFactory } from '../../models/index.js';
 
 export class MessageAPI extends ApiBase {
   /**
@@ -110,22 +120,28 @@ export class MessageAPI extends ApiBase {
    * @param msgId 频道消息的id
    * @param emoji emoji的id, 可以为GuilEmoji或者Emoji
    */
-  // async reactionList(
-  //   msgId: string,
-  //   emoji: string
-  // ): Promise<GuildUser & { reactionTime: number }[]> {
-  //   const data = (
-  //     await this.client.get('v3/message/reaction-list', {
-  //       msg_id: msgId,
-  //       emoji,
-  //     })
-  //   ).data as KAPIResponse<KGuildUser[]>;
-  //   if (data.code === 0) {
-  //     return data.data.map((e) => new GuildUser(e, this.client)) as any;
-  //   } else {
-  //     throw new RequestError(data.code, data.message);
-  //   }
-  // }
+  async reactionList(msgId: string, emoji: string): Promise<ReactionInfo[]> {
+    const data = (
+      await this.client.get('v3/message/reaction-list', {
+        msg_id: msgId,
+        emoji,
+      })
+    ).data as KAPIResponse<KReactionListResponse[]>;
+    if (data.code === 0) {
+      return data.data.map((e) => {
+        return {
+          user: GuildUserFactory.create(
+            e,
+            this.client,
+            GuildFactory.createById(e.guildId, this.client)
+          ),
+          reactionTime: e.reactionTime,
+        };
+      });
+    } else {
+      throw new RequestError(data.code, data.message);
+    }
+  }
 
   /**
    * 给某个消息添加回应
