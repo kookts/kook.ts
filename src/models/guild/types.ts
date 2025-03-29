@@ -1,3 +1,5 @@
+// deprecated
+
 export interface KGuildRaw {
   /**
    * 默认频道

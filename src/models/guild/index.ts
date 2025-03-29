@@ -1,13 +1,100 @@
+import { KRole, Role } from '../../api/guild-role/types.js';
 import { BaseClient } from '../../client/index.js';
-import { BaseModel, KBaseModelRaw } from '../base.js';
+import {
+  BaseModel,
+  BaseModelFactory,
+  KBaseInterface,
+  KPartialModel,
+} from '../base.js';
+import { GuildChannel, KGuildChannel } from '../channel/guild.js';
+import { BaseUser, BaseUserFactory } from '../user/index.js';
 
 export * from './types.js';
 
-export class Guild extends BaseModel {
-  constructor(data: KGuildRaw, client: BaseClient) {
-    super(data, client);
-    this.id = data.id;
+export class Guild extends BaseModel implements KGuild {
+  userId: string;
+  roles: KRole[];
+  boostNum: number;
+  bufferBoostNum: number;
+  level: number;
+  masterId: string;
+  name?: string;
+  topic?: string;
+  master?: BaseUser;
+  icon?: string;
+  notifyType?: number;
+  region?: string;
+  enableOpen?: boolean;
+  openId?: string;
+  defaultChannelId?: string;
+  welcomeChannelId?: string;
+  channels?: GuildChannel[];
+
+  async createChannel(...data: any) {
+    return this.client.Api.channel.create(
+      this.id,
+      data.name,
+      data.parentId,
+      data.type
+    );
+  }
+  async deleteChannel(channelId: string) {
+    return this.client.Api.channel.delete(channelId);
+  }
+  async kickUser(userId: string) {
+    return this.client.Api.guild.kickout(this.id, userId);
+  }
+  async getUsers() {
+    return this.client.Api.guild.userList(this.id);
+  }
+  async leave() {
+    return this.client.Api.guild.leave(this.id);
+  }
+  async mute(userId, type) {
+    return this.client.Api.guildMute.create(this.id, userId, type);
+  }
+  async unmute(userId, type) {
+    return this.client.Api.guildMute.delete(this.id, userId, type);
   }
 }
 
-export interface KGuildRaw extends KBaseModelRaw {}
+export class GuildFactory extends BaseModelFactory(Guild) {
+  static create(data: KGuild, client: BaseClient): Required<Guild> {
+    let guild = client._cache.guild.get(data.id);
+    if (!guild) guild = super.create(data, client);
+    guild.id = data.id;
+    guild.channels = data.channels.map((channel) => {
+      return new GuildChannel(channel, client);
+    });
+    guild.master = BaseUserFactory.createById(guild.masterId, client);
+    guild._initialized = true;
+    return guild as Required<Guild>;
+  }
+  static createById(id: string, client: BaseClient, data?: Partial<KGuild>): Guild {
+    let guild = super.create({ id, ...data }, client) as Guild;
+    guild.id = id;
+    guild._initialized = false;
+    return guild;
+  }
+}
+
+interface KGuildInterface extends KBaseInterface {
+  name: string;
+  topic: string;
+  userId: string;
+  icon: string;
+  notifyType: number;
+  region: string;
+  enableOpen: boolean;
+  openId: string;
+  defaultChannelId: string;
+  welcomeChannelId: string;
+  roles: Role[];
+  channels: KGuildChannel[];
+  boostNum: number;
+  bufferBoostNum: number;
+  level: number;
+  masterId: string;
+}
+
+export type KGuild = KPartialModel<KGuildInterface>;
