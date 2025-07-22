@@ -1,5 +1,6 @@
 import { GuildChannel } from '../models/channel/guild.js';
 import { Guild } from '../models/index.js';
+import { BaseMessage } from '../models/message/base.js';
 import { BaseClient } from './base.js';
 
 class ObjectCache<T> {
@@ -25,5 +26,6 @@ class ObjectCache<T> {
 export class Cache {
   guild: ObjectCache<Guild> = new ObjectCache();
   channel: ObjectCache<GuildChannel> = new ObjectCache();
+  message: ObjectCache<BaseMessage> = new ObjectCache();
   constructor(client: BaseClient) {}
 }

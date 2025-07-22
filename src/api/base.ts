@@ -33,4 +33,18 @@ export class ApiBase {
       sort: data.data.sort,
     };
   }
+
+  toMultipageWithFactory<
+    K extends KAPIMultiPage<KBaseInterface>,
+    T extends BaseModel
+  >(
+    data: KAPIResponse<K>,
+    factory: { create(data: any, client: BaseClient, ...args: any[]): T }
+  ): KAPIMultiPage<T> {
+    return {
+      items: data.data.items.map((d) => factory.create(d, this.client)),
+      meta: data.data.meta,
+      sort: data.data.sort,
+    };
+  }
 }

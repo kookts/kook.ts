@@ -17,7 +17,14 @@ export class GuildChannel extends BaseChannel implements KGuild {
 
 export class GuildChannelFactory extends BaseModelFactory(GuildChannel) {
   public static create(data: KGuildChannel, client: BaseClient): GuildChannel {
-    let guildChannel = super.create(data, client);
+    let guildChannel = client._cache.channel.get(data.id);
+    if (!guildChannel) {
+      guildChannel = super.create(data, client);
+      client._cache.channel.set(data.id, guildChannel);
+    }
+
+    // Update the cached object with new data
+    Object.assign(guildChannel, data);
     guildChannel.guild = GuildFactory.createById(data.guildId, client);
     guildChannel.parentId = data.parentId;
     guildChannel.isCategory = data.isCategory;
@@ -32,8 +39,12 @@ export class GuildChannelFactory extends BaseModelFactory(GuildChannel) {
   }
 
   public static createById(id: string, guild: Guild, client: BaseClient) {
-    let channel = super.create({ id }, client);
-    channel.guild = guild;
+    let channel = client._cache.channel.get(id);
+    if (!channel) {
+      channel = super.create({ id }, client);
+      channel.guild = guild;
+      client._cache.channel.set(id, channel);
+    }
     return channel;
   }
 }

@@ -61,7 +61,13 @@ export class Guild extends BaseModel implements KGuild {
 export class GuildFactory extends BaseModelFactory(Guild) {
   static create(data: KGuild, client: BaseClient): Required<Guild> {
     let guild = client._cache.guild.get(data.id);
-    if (!guild) guild = super.create(data, client);
+    if (!guild) {
+      guild = super.create(data, client);
+      client._cache.guild.set(data.id, guild);
+    }
+
+    // Update the cached object with new data
+    Object.assign(guild, data);
     guild.id = data.id;
     guild.channels = data.channels.map((channel) => {
       return new GuildChannel(channel, client);
@@ -70,10 +76,18 @@ export class GuildFactory extends BaseModelFactory(Guild) {
     guild._initialized = true;
     return guild as Required<Guild>;
   }
-  static createById(id: string, client: BaseClient, data?: Partial<KGuild>): Guild {
-    let guild = super.create({ id, ...data }, client) as Guild;
-    guild.id = id;
-    guild._initialized = false;
+  static createById(
+    id: string,
+    client: BaseClient,
+    data?: Partial<KGuild>
+  ): Guild {
+    let guild = client._cache.guild.get(id);
+    if (!guild) {
+      guild = super.create({ id, ...data }, client) as Guild;
+      guild.id = id;
+      guild._initialized = false;
+      client._cache.guild.set(id, guild);
+    }
     return guild;
   }
 }

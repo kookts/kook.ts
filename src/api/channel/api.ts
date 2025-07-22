@@ -1,5 +1,10 @@
-import { GuildChannel, KGuildChannel } from '../../models/channel/guild.js';
-import { GuildUser, KGuildUser } from '../../models/user';
+import {
+  GuildChannel,
+  GuildChannelFactory,
+  KGuildChannel,
+} from '../../models/channel/guild.js';
+import { GuildUser, GuildUserFactory, KGuildUser } from '../../models/user';
+import { GuildFactory } from '../../models/guild';
 import RequestError from '../../models/error/RequestError.js';
 import { ApiBase } from '../base.js';
 import { KAPIResponse } from '../types.js';
@@ -20,7 +25,7 @@ export class ChannelAPI extends ApiBase {
       )
     ).data as KAPIResponse<KChannelListResponse>;
     if (data.code === 0) {
-      return this.toMultipage(data, GuildChannel);
+      return this.toMultipageWithFactory(data, GuildChannelFactory);
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -45,7 +50,10 @@ export class ChannelAPI extends ApiBase {
       )
     ).data as KAPIResponse<KGuildChannel>;
     if (data.code === 0) {
-      return new GuildChannel(data.data, this.client) as Required<GuildChannel>;
+      return GuildChannelFactory.create(
+        data.data,
+        this.client
+      ) as Required<GuildChannel>;
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -85,7 +93,10 @@ export class ChannelAPI extends ApiBase {
       )
     ).data as KAPIResponse<KGuildChannel>;
     if (data.code === 0) {
-      return new GuildChannel(data.data, this.client) as Required<GuildChannel>;
+      return GuildChannelFactory.create(
+        data.data,
+        this.client
+      ) as Required<GuildChannel>;
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -131,7 +142,10 @@ export class ChannelAPI extends ApiBase {
       )
     ).data as KAPIResponse<KGuildChannel>;
     if (data.code === 0) {
-      return new GuildChannel(data.data, this.client) as Required<GuildChannel>;
+      return GuildChannelFactory.create(
+        data.data,
+        this.client
+      ) as Required<GuildChannel>;
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -173,7 +187,8 @@ export class ChannelAPI extends ApiBase {
     if (data.code === 0) {
       const guildUserList = [];
       for (const user of data.data) {
-        guildUserList.push(new GuildUser(user, this.client));
+        const guild = GuildFactory.createById(user.guildId, this.client);
+        guildUserList.push(GuildUserFactory.create(user, this.client, guild));
       }
       return guildUserList;
     } else {

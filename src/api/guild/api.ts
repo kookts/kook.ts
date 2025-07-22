@@ -1,6 +1,6 @@
 import RequestError from '../../models/error/RequestError.js';
 import { Guild, GuildFactory, KGuild } from '../../models/index.js';
-import { GuildUser } from '../../models/user/guild.js';
+import { GuildUser, GuildUserFactory } from '../../models/user/guild.js';
 import { ApiBase } from '../base.js';
 import { KAPIResponse } from '../types.js';
 import {
@@ -35,7 +35,7 @@ export class GuildApi extends ApiBase {
       )
     ).data as KAPIResponse<KGuildListResponse>;
     if (data.code === 0) {
-      return this.toMultipage(data, Guild);
+      return this.toMultipageWithFactory(data, GuildFactory);
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -98,8 +98,21 @@ export class GuildApi extends ApiBase {
     const data = (await this.client.get('v3/guild/user-list', params))
       .data as KAPIResponse<KGuildUserListResponse>;
     if (data.code === 0) {
+      const guild = GuildFactory.createById(guildId, this.client);
+
+      // Create a factory wrapper that includes the guild context
+      const guildUserFactoryWrapper = {
+        create: (userData: any, client: any) =>
+          GuildUserFactory.create(userData, client, guild),
+      };
+
+      const multipageResult = this.toMultipageWithFactory(
+        data,
+        guildUserFactoryWrapper
+      );
+
       return {
-        ...this.toMultipage(data, GuildUser),
+        ...multipageResult,
         offlineCount: data.data.offlineCount,
         onlineCount: data.data.onlineCount,
         userCount: data.data.userCount,
