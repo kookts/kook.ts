@@ -1,4 +1,3 @@
-import { KRole, Role } from '../../api/guild-role/types.js';
 import { BaseClient } from '../../client/index.js';
 import {
   BaseModel,
@@ -7,13 +6,14 @@ import {
   KPartialModel,
 } from '../base.js';
 import { GuildChannel, KGuildChannel } from '../channel/guild.js';
+import { Role, KRole } from '../role/index.js';
 import { BaseUser, BaseUserFactory } from '../user/index.js';
 
 export * from './types.js';
 
 export class Guild extends BaseModel implements KGuild {
   userId: string;
-  roles: KRole[];
+  roles: Role[];
   boostNum: number;
   bufferBoostNum: number;
   level: number;

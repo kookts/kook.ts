@@ -1,33 +1,37 @@
 import { BaseClient } from '../../client/index.js';
 import RequestError from '../../models/error/RequestError.js';
+import { ApiBase } from '../base.js';
 import { KAPIResponse } from '../types.js';
+import {
+  Role,
+  RoleFactory,
+} from '../../models/role/index.js';
 import {
   KGrantUserRoleResponse,
   KRevokeUserRoleResponse,
   KRole,
-  Role,
   UserRoleGrantResponseInternal,
   UserRoleRevokeResponseInternal,
 } from './types.js';
 
-export class GuildRoleAPI {
-  private self: BaseClient;
-  constructor(self: BaseClient) {
-    this.self = self;
-  }
-
+export class GuildRoleAPI extends ApiBase {
   /**
    * 获取服务器角色列表
    * @param guildId 服务器的id
    */
-  async index(guildId: string): Promise<Role[]> {
+  async index(guildId: string): Promise<Required<Role>[]> {
     const data = (
-      await this.self.get('v3/guild-role/index', {
-        guild_id: guildId,
-      })
+      await this.client.get(
+        'v3/guild-role/index',
+        this.toParams({
+          guildId,
+        })
+      )
     ).data as KAPIResponse<KRole[]>;
     if (data.code === 0) {
-      return data.data;
+      return data.data.map((roleData) =>
+        RoleFactory.create(roleData, this.client)
+      );
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -39,15 +43,18 @@ export class GuildRoleAPI {
    * @param guildId 服务器id
    * @returns 创建的角色
    */
-  async create(guildId: string, name?: string): Promise<Role> {
+  async create(guildId: string, name?: string): Promise<Required<Role>> {
     const data = (
-      await this.self.post('v3/guild-role/create', {
-        name,
-        guild_id: guildId,
-      })
+      await this.client.post(
+        'v3/guild-role/create',
+        this.toParams({
+          name,
+          guildId,
+        })
+      )
     ).data as KAPIResponse<KRole>;
     if (data.code === 0) {
-      return data.data;
+      return RoleFactory.create(data.data, this.client);
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -67,11 +74,14 @@ export class GuildRoleAPI {
   ): Promise<UserRoleGrantResponseInternal> {
     if (typeof roleId === 'string') roleId = parseInt(roleId);
     const data = (
-      await this.self.post('v3/guild-role/grant', {
-        guild_id: guildId,
-        user_id: userId,
-        role_id: roleId,
-      })
+      await this.client.post(
+        'v3/guild-role/grant',
+        this.toParams({
+          guildId,
+          userId,
+          roleId,
+        })
+      )
     ).data as KAPIResponse<KGrantUserRoleResponse>;
     if (data.code === 0) {
       return {
@@ -90,20 +100,23 @@ export class GuildRoleAPI {
    * @param guildId 服务器id
    * @returns 更新后的角色
    */
-  async update(guildId: string, role: Role): Promise<Role> {
+  async update(guildId: string, role: Role): Promise<Required<Role>> {
     const data = (
-      await this.self.post('v3/guild-role/update', {
-        guild_id: guildId,
-        name: role.name,
-        color: role.color,
-        role_id: role.roleId,
-        hoist: role.roleId,
-        mentionable: role.mentionable,
-        permissions: role.permissions,
-      })
+      await this.client.post(
+        'v3/guild-role/update',
+        this.toParams({
+          guildId,
+          name: role.name,
+          color: role.color,
+          roleId: role.roleId,
+          hoist: role.hoist,
+          mentionable: role.mentionable,
+          permissions: role.permissions,
+        })
+      )
     ).data as KAPIResponse<KRole>;
     if (data.code === 0) {
-      return data.data;
+      return RoleFactory.create(data.data, this.client);
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -122,11 +135,14 @@ export class GuildRoleAPI {
   ): Promise<UserRoleRevokeResponseInternal> {
     if (typeof roleId === 'string') roleId = parseInt(roleId);
     const data = (
-      await this.self.post('v3/guild-role/revoke', {
-        guild_id: guildId,
-        user_id: userId,
-        role_id: roleId,
-      })
+      await this.client.post(
+        'v3/guild-role/revoke',
+        this.toParams({
+          guildId,
+          userId,
+          roleId,
+        })
+      )
     ).data as KAPIResponse<KRevokeUserRoleResponse>;
     if (data.code === 0) {
       return {
@@ -146,10 +162,13 @@ export class GuildRoleAPI {
    */
   async delete(guildId: string, roleId: string | number): Promise<boolean> {
     const data = (
-      await this.self.post('v3/guild-role/delete', {
-        guild_id: guildId,
-        role_id: roleId,
-      })
+      await this.client.post(
+        'v3/guild-role/delete',
+        this.toParams({
+          guildId,
+          roleId,
+        })
+      )
     ).data as KAPIResponse<[]>;
     if (data.code === 0) {
       return true;

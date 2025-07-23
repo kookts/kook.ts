@@ -1,4 +1,4 @@
-import { GuildUser, KGuildUser } from '../../models/index.js';
+import { GuildMessage, GuildUser, KGuildUser } from '../../models/index.js';
 
 export interface KMessageCreateResponse {
   msgId: string;

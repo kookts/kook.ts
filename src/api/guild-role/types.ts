@@ -29,8 +29,6 @@ export interface KRole {
   permissions: number;
 }
 
-export type Role = KRole;
-
 export interface KGrantUserRoleResponse {
   /**
    * 用户ID

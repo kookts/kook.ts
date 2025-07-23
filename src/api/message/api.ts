@@ -129,12 +129,9 @@ export class MessageAPI extends ApiBase {
     ).data as KAPIResponse<KReactionListResponse[]>;
     if (data.code === 0) {
       return data.data.map((e) => {
+        const guild = GuildFactory.createById(e.guildId, this.client);
         return {
-          user: GuildUserFactory.create(
-            e,
-            this.client,
-            GuildFactory.createById(e.guildId, this.client)
-          ),
+          user: GuildUserFactory.create(e, this.client, guild),
           reactionTime: e.reactionTime,
         };
       });
