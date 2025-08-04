@@ -2,33 +2,36 @@
 
 Javascript/Typescript SDK For KOOK.
 
-## 优点
+## 🚀 核心优势
 
+### 专为 KOOK 深度定制
+- 与 KOOK 官方 API 完美对接，支持最新的API
+- 相比通用机器人框架，提供最佳的灵活性和性能
+- 完整覆盖 KOOK 平台特有功能
+
+### 极致的开发体验
+- 完整的 TypeScript 支持：提供类型安全，减少运行时错误
+- 强大的事件系统：支持通配符匹配，如 message.* 和 event.*
+- 智能的数据封装：API 返回值自动封装为易用的 Class 对象
 - 对事件等进行了封装，保障 KOOK 事件及 API 发生改变的时候可以完美兼容，无需改动代码；
-- 最稳定的连接实现，无需担心掉线问题（感谢 @raycursive 的 fsm）；
-- 全面的 API 覆盖
-- 超简单的上手，完善的文档（还没写）
 
-## 基础使用方法
+### 久经考验的稳定性
+- 双模式连接：支持 WebSocket 和 Webhook 模式
+- 自动重连机制：基于 FSM（有限状态机）的稳定连接实现(感谢@@raycursive)
+- 完善的错误处理：统一的错误处理机制，便于调试和监控
 
-消息事件为'message.\*',其中\*为 1-10，与官方文档保持一致；  
-系统事件为'event.\*'，其中\*为事件名，如"add_reaction"；  
-原始事件为'raw'，为系统原始下发的事件。
-
-事件支持 wild card, 可以使用\*通配符进行匹配。
-
+### 简单易用的API设计
 ```javascript
 import { BaseClient } from 'kookts/client/index.js';
 import * as dotenv from 'dotenv';
 import { GuildMessage } from 'kookts/models/index.js';
 
 dotenv.config();
+// 简洁的使用方式
 
 const client = new BaseClient({
   mode: 'websocket',
   token: process.env.TOKEN!,
-  verifyToken: process.env.VERIFY,
-  key: process.env.KEY,
   logConfig: { level: 'debug' },
 });
 
@@ -41,40 +44,23 @@ client.on('message.*', (data: GuildMessage) => {
 client.connect();
 ```
 
-## TODO
+### 性能优化及开发流程简化
+- 性能优化：避免重复 Object.assign，提升运行效率
+- 日志系统：集成 Winston 日志框架，支持多种输出格式
+- 缓存机制：内置缓存系统，减少不必要的 API 调用
+- 请求拦截：自动处理认证和响应数据格式化
 
-- [x] 完成 MessageSource 迁移
-- [x] 完成 EventEmitter 迁移
-- [x] 完成 WebSocket 迁移
-- [ ] EventEmitter on() 类型补全
-- [ ] 增加 Webhook 对 compress 的适配
-- [ ] 补全 Models
-- [ ] 完成 API 迁移
-- [ ] 增加 API
-- [ ] 增加消息队列
-- [ ] 增加自动跟随限速
-- [x] 重复 Object.assign 性能优化
+## 📦 主要功能模块
+频道管理：完整的频道 CRUD 操作和权限管理
+消息系统：支持文本、卡片、图片等多种消息类型
+用户管理：用户信息获取、角色管理
+事件监听：实时接收各类平台事件
+API 封装：覆盖 KOOK 平台主要 API 接口
 
-### API TODO
+## Trouble Shooting
+关于使用 VS Code 进行 Debug 时不显示日志的问题
 
-- [ ] model: message
-- [x] channel
-- [ ] asset
-- [ ongoing ] channel-role
-- [ ] direct-message
-- [x] guild
-- [ ] guild-mute
-- [ ] guild-role
-- [ ] intimacy
-- [ ] invite
-- [ ongoing ] message
-- [ ] user
-- [ ] user-chat
-- [ ] other(to be added)
-
-## 关于使用 VS Code 进行 Debug 时不显示日志的问题
-
-在 Debug 配置中增加一行`"outputCapture": "std"`即可。
+>在 Debug 配置中增加一行`"outputCapture": "std"`即可。
 
 
 
