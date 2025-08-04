@@ -1,4 +1,6 @@
 export interface KRole {
+  // fake id for BaseModel compatibility
+  id: string;
   /**
    * 角色的id
    */
@@ -27,7 +29,31 @@ export interface KRole {
    * 权限,参见[权限说明](#权限说明)
    */
   permissions: number;
+  /**
+   * 角色描述
+   */
+  desc?: string;
+  /**
+   * 颜色映射
+   */
+  colorMap?: Record<string, any>;
+  /**
+   * 颜色类型
+   */
+  colorType?: number;
+  /**
+   * 操作权限
+   */
+  opPermissions?: number;
+  /**
+   * 角色类型
+   */
+  type?: number;
 }
+
+import { KAPIMultiPage } from '../types.js';
+
+export type KRoleListResponse = KAPIMultiPage<KRole>;
 
 export interface KGrantUserRoleResponse {
   /**

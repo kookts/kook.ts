@@ -2,14 +2,13 @@ import { BaseClient } from '../../client/index.js';
 import RequestError from '../../models/error/RequestError.js';
 import { ApiBase } from '../base.js';
 import { KAPIResponse } from '../types.js';
-import {
-  Role,
-  RoleFactory,
-} from '../../models/role/index.js';
+import { Role, RoleFactory } from '../../models/role/index.js';
+import { Guild, GuildFactory } from '../../models/guild/index.js';
 import {
   KGrantUserRoleResponse,
   KRevokeUserRoleResponse,
   KRole,
+  KRoleListResponse,
   UserRoleGrantResponseInternal,
   UserRoleRevokeResponseInternal,
 } from './types.js';
@@ -19,18 +18,19 @@ export class GuildRoleAPI extends ApiBase {
    * 获取服务器角色列表
    * @param guildId 服务器的id
    */
-  async index(guildId: string): Promise<Required<Role>[]> {
+  async list(guildId: string): Promise<Required<Role>[]> {
     const data = (
       await this.client.get(
-        'v3/guild-role/index',
+        'v3/guild-role/list',
         this.toParams({
           guildId,
         })
       )
-    ).data as KAPIResponse<KRole[]>;
+    ).data as KAPIResponse<KRoleListResponse>;
     if (data.code === 0) {
-      return data.data.map((roleData) =>
-        RoleFactory.create(roleData, this.client)
+      const guild = GuildFactory.createById(guildId, this.client);
+      return data.data.items.map((roleData) =>
+        RoleFactory.create(roleData, this.client, guild)
       );
     } else {
       throw new RequestError(data.code, data.message);
@@ -54,7 +54,8 @@ export class GuildRoleAPI extends ApiBase {
       )
     ).data as KAPIResponse<KRole>;
     if (data.code === 0) {
-      return RoleFactory.create(data.data, this.client);
+      const guild = GuildFactory.createById(guildId, this.client);
+      return RoleFactory.create(data.data, this.client, guild);
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -116,7 +117,8 @@ export class GuildRoleAPI extends ApiBase {
       )
     ).data as KAPIResponse<KRole>;
     if (data.code === 0) {
-      return RoleFactory.create(data.data, this.client);
+      const guild = GuildFactory.createById(guildId, this.client);
+      return RoleFactory.create(data.data, this.client, guild);
     } else {
       throw new RequestError(data.code, data.message);
     }

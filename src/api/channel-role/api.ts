@@ -9,9 +9,7 @@ import {
 import {
   KChannelRoleListResponse,
   KChannelRoleUpdateResponse,
-  ChannelRoleListResponse,
   ChannelRoleUpdateResponse,
-  ChannelRoleSyncResponse,
   KChannelRoleSyncResponse,
 } from './types.js';
 

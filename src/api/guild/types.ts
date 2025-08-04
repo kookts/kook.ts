@@ -1,6 +1,5 @@
 import { Channel } from '../../models/channel/types.js';
 import { Guild, GuildUser, KGuild, KGuildUser } from '../../models/index.js';
-import { Role } from '../guild-role/types.js';
 import { KAPIMultiPage } from '../types.js';
 
 export interface KGuildListResponse extends KAPIMultiPage<Required<KGuild>> {}
