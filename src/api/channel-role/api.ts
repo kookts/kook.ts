@@ -15,6 +15,21 @@ import {
 
 export class ChannelRoleAPI extends ApiBase {
   /**
+   * Helper method to create ChannelRolePermissions with guild context
+   */
+  private async createPermissionsWithGuildContext(
+    data: KChannelRoleListResponse | KChannelRoleSyncResponse,
+    channelId: string
+  ): Promise<Required<ChannelRolePermissions>> {
+    const channel = await this.client.Api.channel.view(channelId);
+    return ChannelRolePermissionsFactory.create(
+      { ...data, channelId } as KChannelRolePermissions,
+      this.client,
+      channel.guildId
+    );
+  }
+
+  /**
    * 频道角色权限详情
    * @param channelId 频道id
    */
@@ -28,13 +43,7 @@ export class ChannelRoleAPI extends ApiBase {
       )
     ).data as KAPIResponse<KChannelRoleListResponse>;
     if (data.code === 0) {
-      // We need to get the guild ID from the channel to properly create user objects
-      const channel = await this.client.Api.channel.view(channelId);
-      return ChannelRolePermissionsFactory.create(
-        { ...data.data, channelId } as KChannelRolePermissions,
-        this.client,
-        channel.guildId
-      );
+      return this.createPermissionsWithGuildContext(data.data, channelId);
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -99,7 +108,11 @@ export class ChannelRoleAPI extends ApiBase {
       )
     ).data as KAPIResponse<KChannelRoleUpdateResponse>;
     if (data.code === 0) {
-      return data.data;
+      return {
+        roleId: data.data.role_id,
+        allow: data.data.allow,
+        deny: data.data.deny,
+      };
     } else {
       throw new RequestError(data.code, data.message);
     }
@@ -119,13 +132,7 @@ export class ChannelRoleAPI extends ApiBase {
       )
     ).data as KAPIResponse<KChannelRoleSyncResponse>;
     if (data.code === 0) {
-      // We need to get the guild ID from the channel to properly create user objects
-      const channel = await this.client.Api.channel.view(channelId);
-      return ChannelRolePermissionsFactory.create(
-        { ...data.data, channelId } as KChannelRolePermissions,
-        this.client,
-        channel.guildId
-      );
+      return this.createPermissionsWithGuildContext(data.data, channelId);
     } else {
       throw new RequestError(data.code, data.message);
     }

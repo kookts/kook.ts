@@ -30,6 +30,12 @@ export interface KChannelRoleUpdateResponse {
   deny: number;
 }
 
+export interface ChannelRoleUpdateResponse {
+  roleId: number;
+  allow: number;
+  deny: number;
+}
+
 export interface ChannelRoleSyncResponse {
   permissionOverwrites: KChannelPermissionOverwrite[];
   permissionUsers: KChannelPermissionUser[];
@@ -39,5 +45,3 @@ export interface KChannelRoleSyncResponse {
   permissionOverwrites: KChannelPermissionOverwrite[];
   permissionUsers: KChannelPermissionUser[];
 }
-
-export type ChannelRoleUpdateResponse = KChannelRoleUpdateResponse;
