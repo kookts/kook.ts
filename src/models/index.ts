@@ -5,3 +5,4 @@ export * from './message/index.js';
 export * from './role/index.js';
 export * from './event/index.js';
 export * from './base.js';
+export * from './asset/index.js';

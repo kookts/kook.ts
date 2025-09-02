@@ -1,15 +1,11 @@
 import FormData, { Stream } from 'form-data';
-import { BaseClient } from '../../client/index.js';
 import RequestError from '../../models/error/RequestError.js';
 import { KAPIResponse } from '../types.js';
 import { AssetCreateResponseInternal, KAssetCreateResponse } from './types.js';
+import { ApiBase } from '../base.js';
+import { Asset, AssetFactory } from '../../models/asset/index.js';
 
-export class AssetAPI {
-  private self: BaseClient;
-  constructor(self: BaseClient) {
-    this.self = self;
-  }
-
+export class AssetAPI extends ApiBase {
   /**
    * 上传文件
    * @param file 文件，看到参数错误时需要在选项中补齐文件相关内容。
@@ -18,16 +14,16 @@ export class AssetAPI {
   async create(
     file: Buffer | Stream,
     option?: FormData.AppendOptions
-  ): Promise<AssetCreateResponseInternal> {
+  ): Promise<Asset> {
     const form = new FormData();
     form.append('file', file, option);
     const data = (
-      await this.self.axios.post('v3/asset/create', form, {
+      await this.client.axios.post('v3/asset/create', form, {
         headers: form.getHeaders(),
       })
     ).data as KAPIResponse<KAssetCreateResponse>;
     if (data.code === 0) {
-      return { url: data.data.url };
+      return AssetFactory.create({ url: data.data.url }, this.client);
     } else {
       throw new RequestError(data.code, data.message);
     }
