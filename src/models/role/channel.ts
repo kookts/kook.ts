@@ -206,7 +206,7 @@ export class ChannelRolePermissions extends BaseModel {
       ? ChannelPermissionHelper.from(existing.allow, existing.deny)
       : new ChannelPermissionHelper();
 
-    helper.addAllow(...permissions);
+    helper.addAllows(...permissions);
     return this.addRoleOverwrite(roleId, helper.allowValue, helper.denyValue);
   }
 
@@ -225,7 +225,7 @@ export class ChannelRolePermissions extends BaseModel {
       ? ChannelPermissionHelper.from(existing.allow, existing.deny)
       : new ChannelPermissionHelper();
 
-    helper.addDeny(...permissions);
+    helper.addDenies(...permissions);
     return this.addRoleOverwrite(roleId, helper.allowValue, helper.denyValue);
   }
 
@@ -262,7 +262,7 @@ export class ChannelRolePermissions extends BaseModel {
       ? ChannelPermissionHelper.from(existing.allow, existing.deny)
       : new ChannelPermissionHelper();
 
-    helper.addAllow(...permissions);
+    helper.addAllows(...permissions);
     return this.addUserOverwrite(user, helper.allowValue, helper.denyValue);
   }
 
@@ -281,7 +281,7 @@ export class ChannelRolePermissions extends BaseModel {
       ? ChannelPermissionHelper.from(existing.allow, existing.deny)
       : new ChannelPermissionHelper();
 
-    helper.addDeny(...permissions);
+    helper.addDenies(...permissions);
     return this.addUserOverwrite(user, helper.allowValue, helper.denyValue);
   }
 
